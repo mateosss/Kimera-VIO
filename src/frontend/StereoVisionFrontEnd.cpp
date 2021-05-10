@@ -81,9 +81,11 @@ FrontendOutput::UniquePtr StereoVisionFrontEnd::spinOnce(
     const StereoFrontEndInputPayload& input) {
   switch (frontend_state_) {
     case FrontendState::Bootstrap: {
+      printf(">>> StereoVisionFrontEnd::spinOnce Bootstrap\n");
       return bootstrapSpin(input);
     } break;
     case FrontendState::Nominal: {
+      printf(">>> StereoVisionFrontEnd::spinOnce Nominal\n");
       return nominalSpin(input);
     } break;
     default: { LOG(FATAL) << "Unrecognized frontend state."; } break;
@@ -217,6 +219,23 @@ FrontendOutput::UniquePtr StereoVisionFrontEnd::nominalSpin(
 
     // Return the output of the frontend for the others.
     VLOG(2) << "Frontend output is a keyframe: pushing to output callbacks.";
+
+    // void Pose3::print(const std::string& s) const {
+  // std::cout << (s.empty() ? s : s + " ") << *this << std::endl;
+// }
+    printf(">>> \tFrontEndOutput\n");
+    printf(">>> TrackerStatusSummary: \n");
+    std::cout << TrackerStatusSummary::asString(status_stereo_measurements->first.kfTrackingStatus_stereo_) << "\n";
+    printf(">>> tracking_status_stereo: \n");
+    std::cout << TrackerStatusSummary::asString(trackerStatusSummary_.kfTrackingStatus_stereo_) << "\n";
+
+    printf(">>> StatusStereoMeasurement pose: ");
+    status_stereo_measurements->first.lkf_T_k_stereo_.print("TRACKERPOSE");
+    printf(">>> TrackerStatusSummary pose: ");
+    trackerStatusSummary_.lkf_T_k_stereo_.print("TRACKERPOSE");
+    printf(">>> body_pose: ");
+    getRelativePoseBodyStereo().print("BODYPOSE");
+
     return VIO::make_unique<FrontendOutput>(
         true,
         status_stereo_measurements,

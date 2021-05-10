@@ -277,6 +277,7 @@ Pipeline::~Pipeline() {
 
 /* -------------------------------------------------------------------------- */
 void Pipeline::spinOnce(StereoImuSyncPacket::UniquePtr stereo_imu_sync_packet) {
+  printf(">>> Pipeline::spinOnce()\n");
   CHECK(stereo_imu_sync_packet);
   if (!shutdown_) {
     // Push to stereo frontend input queue.
@@ -304,6 +305,7 @@ bool Pipeline::spinViz() {
 
 /* -------------------------------------------------------------------------- */
 void Pipeline::spinSequential() {
+  printf(">>> Pipeline::spinSequential()\n");
   // Spin once each pipeline module.
   // CHECK(data_provider_module_);
   // data_provider_module_->spin();
@@ -314,13 +316,13 @@ void Pipeline::spinSequential() {
   CHECK(vio_backend_module_);
   vio_backend_module_->spin();
 
-  if (mesher_module_) mesher_module_->spin();
+  if (mesher_module_) { printf(">>> mesher_module_ enabled\n"); mesher_module_->spin();}
 
-  if (lcd_module_) lcd_module_->spin();
+  if (lcd_module_) { printf(">>> lcd_module_ enabled\n"); lcd_module_->spin();}
 
-  if (visualizer_module_) visualizer_module_->spin();
+  if (visualizer_module_) { printf(">>> visualizer_module_ enabled\n"); visualizer_module_->spin();}
 
-  if (display_module_) display_module_->spin();
+  if (display_module_) { printf(">>> display_module_ enabled\n"); display_module_->spin();}
 }
 
 std::string Pipeline::printStatus() const {

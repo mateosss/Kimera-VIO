@@ -36,6 +36,8 @@ DEFINE_string(
     "Path to the folder containing the yaml files with the VIO parameters.");
 
 int main(int argc, char* argv[]) {
+  printf(">>> main()\n");
+
   // Initialize Google's flags library.
   google::ParseCommandLineFlags(&argc, &argv, true);
   // Initialize Google's logging library.
@@ -43,6 +45,10 @@ int main(int argc, char* argv[]) {
 
   // Parse VIO parameters from gflags.
   VIO::VioParams vio_params(FLAGS_params_folder_path);
+
+  // printf(">>> BEGIN vio_params.print() \n");
+  // vio_params.print();
+  // printf(">>> END vio_params.print() \n");
 
   // Build dataset parser.
   VIO::DataProviderInterface::Ptr dataset_parser = nullptr;
@@ -59,6 +65,12 @@ int main(int argc, char* argv[]) {
     }
   }
   CHECK(dataset_parser);
+  printf(">>> dataset_parser created\n");
+
+  // printf(">>> BEGIN euroc_parser->print()\n");
+  // auto euroc_parser = std::dynamic_pointer_cast<VIO::EurocDataProvider>(dataset_parser);
+  // euroc_parser->print();
+  // printf(">>> END euroc_parser->print()\n");
 
   VIO::Pipeline vio_pipeline(vio_params);
 
@@ -99,7 +111,9 @@ int main(int argc, char* argv[]) {
     handle_shutdown.get();
     handle_pipeline.get();
   } else {
-    while (dataset_parser->spin() && vio_pipeline.spin()) {
+    auto euroc_parser = std::static_pointer_cast<VIO::EurocDataProvider>(dataset_parser);
+    while (euroc_parser->spin() && vio_pipeline.spin()) {
+      printf(">>> Spin loop\n");
       continue;
     };
     vio_pipeline.shutdown();

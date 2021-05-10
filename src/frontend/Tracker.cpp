@@ -931,6 +931,7 @@ cv::Mat Tracker::getTrackerImage(const Frame& ref_frame,
   static const cv::Scalar gray(0, 255, 255);
   static const cv::Scalar red(0, 0, 255);
   static const cv::Scalar green(0, 255, 0);
+  static const cv::Scalar cyan(0, 255, 0);
   static const cv::Scalar blue(255, 0, 0);
 
   // Add extra corners if desired.

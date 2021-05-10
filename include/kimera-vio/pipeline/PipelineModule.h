@@ -187,14 +187,24 @@ class PipelineModule : public PipelineModuleBase {
    * it returns false.
    */
   bool spin() override {
+    printf(">>> PipelineModule::spin()\n");
     VLOG_IF(1, parallel_run_) << "Module: " << name_id_ << " - Spinning.";
     utils::StatsCollector timing_stats(name_id_ + " [ms]");
     while (!shutdown_) {
+      printf(">>> PipelineModue::Spin() while\n");
       // Get input data from queue by waiting for payload.
       is_thread_working_ = false;
+      // mateosss: As DataProviderModule getInputPacket will construct a StereoImuSyncPacket
+      // and the idea would've been for getInputPacket to return it but right now that is
+      // in a TODO comment in DataProviderModule::getInputPacket so instead
+      // what this does is it calls vio_pipeline_callback_(StereoImuSyncPacket) instead
+      // which was registered in VIO::Pipeline constructor as
+      // data_provider_module_->registerVioPipelineCallback(std::bind(&Pipeline::spinOnce, this, _1));
+      // In conclusion, Pipeline::spinOnce will be called inside this next getInputPacket()
+      // and that's what gets the pipeline rolling, or dare I say, "spinning"
       InputUniquePtr input = getInputPacket();
       is_thread_working_ = true;
-      if (input) {
+      if (input) { // mateosss: Null for DataProviderModule
         auto tic = utils::Timer::tic();
         // Transfer the ownership of input to the actual pipeline module.
         // From this point on, you cannot use input, since spinOnce owns it.

@@ -61,6 +61,7 @@ EurocDataProvider::EurocDataProvider(const std::string& dataset_path,
       imu_measurements_(),
       logger_(FLAGS_log_euroc_gt_data ? VIO::make_unique<EurocGtLogger>()
                                       : nullptr) {
+  printf(">>> EurocDataProvider ctor complex start\n");
   // Start processing dataset from frame initial_k.
   // Useful to skip a bunch of images at the beginning (imu calibration).
   CHECK_GE(initial_k_, 0);
@@ -84,6 +85,7 @@ EurocDataProvider::EurocDataProvider(const std::string& dataset_path,
     CHECK_GT(imu_measurements_.size(), 0u);
     dataset_parsed_ = true;
   }
+  printf(">>> after parsing, found n=%zu imumeasurements\n", imu_measurements_.size());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -91,7 +93,9 @@ EurocDataProvider::EurocDataProvider(const VioParams& vio_params)
     : EurocDataProvider(FLAGS_dataset_path,
                         FLAGS_initial_k,
                         FLAGS_final_k,
-                        vio_params) {}
+                        vio_params) {
+  printf(">>> EurocDataProvider ctor vio_params\n");
+}
 
 /* -------------------------------------------------------------------------- */
 EurocDataProvider::~EurocDataProvider() {
@@ -100,6 +104,7 @@ EurocDataProvider::~EurocDataProvider() {
 
 /* -------------------------------------------------------------------------- */
 bool EurocDataProvider::spin() {
+  printf(">>> EurocDataProvider::spin()\n");
   if (dataset_parsed_) {
     if (!is_imu_data_sent_) {
       // First, send all the IMU data. The flag is to avoid sending it several

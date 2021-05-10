@@ -194,6 +194,7 @@ class Pipeline {
    * if working nominally (it does not return unless shutdown in parallel mode).
    */
   bool spin() {
+    printf(">>> Pipeline::spin()\n");
     // Feed data to the pipeline
     CHECK(data_provider_module_);
     LOG(INFO) << "Spinning Kimera-VIO.";
